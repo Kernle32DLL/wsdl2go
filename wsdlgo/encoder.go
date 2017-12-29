@@ -905,7 +905,7 @@ func (ge *goEncoder) genParams(m *wsdl.Message, needsTag bool) []*parameter {
 			}
 			token = trimns(param.Element)
 		}
-		params[i] = &parameter{code: param.Name, dataType: t, xmlToken: token}
+		params[i] = &parameter{code: ge.replaceAbbreviations(param.Name), dataType: t, xmlToken: token}
 		if needsTag {
 			ge.needsStdPkg["encoding/xml"] = true
 			ge.needsTag[strings.TrimPrefix(t, "*")] = elName
@@ -1445,7 +1445,7 @@ func (ge *goEncoder) genElementField(w io.Writer, el *wsdl.Element) {
 		et = "string"
 	}
 	tag := el.Name
-	fmt.Fprintf(w, "%s ", goSymbol(el.Name))
+	fmt.Fprintf(w, "%s ", goSymbol(ge.replaceAbbreviations(el.Name)))
 	if el.Max != "" && el.Max != "1" {
 		fmt.Fprintf(w, "[]")
 		if slicetype != "" {
@@ -1481,6 +1481,11 @@ func (ge *goEncoder) genAttributeField(w io.Writer, attr *wsdl.Attribute) {
 	}
 	fmt.Fprintf(w, "%s `xml:\"%s\" json:\"%s\" yaml:\"%s\"`\n",
 		typ, tag, tag, tag)
+}
+
+// replaceAbbreviations replaces golint abbreviations
+func (ge *goEncoder) replaceAbbreviations(input string) string {
+	return strings.Replace(input, "Id", "ID", -1)
 }
 
 // writeComments writes comments to w, capped at ~80 columns.
