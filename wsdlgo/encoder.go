@@ -1333,8 +1333,7 @@ func (ge *goEncoder) genStructFields(w io.Writer, d *wsdl.Definitions, ct *wsdl.
 func (ge *goEncoder) genOpStructMessage(w io.Writer, d *wsdl.Definitions, name string, message *wsdl.Message) {
 	sanitizedMessageName := ge.sanitizedOperationsType(message.Name)
 
-	ge.writeComments(w, sanitizedMessageName, "Operation wrapper for "+name+".")
-	ge.writeComments(w, sanitizedMessageName, "")
+	ge.writeComments(w, sanitizedMessageName, sanitizedMessageName + " is a generated operation wrapper for "+name+".")
 	fmt.Fprintf(w, "type %s struct {\n", sanitizedMessageName)
 	if elName, ok := ge.needsTag[sanitizedMessageName]; ok {
 		fmt.Fprintf(w, "XMLName xml.Name `xml:\"%s %s\" json:\"-\" yaml:\"-\"`\n",
